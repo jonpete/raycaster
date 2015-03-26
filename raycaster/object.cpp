@@ -57,7 +57,6 @@ Object* create_object(float x, float y, float height, int sprite, int w, int h, 
 	obj->y = y;
 	obj->height = height;
 	obj->sprite = sprite;
-	obj->light = 0;
 	obj->w = w;
 	obj->h = h;
 	obj->angle = angle;
@@ -313,9 +312,8 @@ Object* fire_projectile(Object *shooter, Object *obj_list, Gun gun)	// Change to
 	{
 		proj->x += cos(proj->velocity_angle) * (3 + abs(shooter->velocity));
 		proj->y += sin(proj->velocity_angle) * (3 + abs(shooter->velocity));		
-	}while	(obj_collide(shooter, proj));
-		
-	if(gun.full_bright) proj->light = FULL_BRIGHT;
+	}while	(obj_collide(shooter, proj));		
+	
 	proj->attrib[P_DAMAGE] = gun.damage;
 	proj->velocity = gun.speed;	
 	
@@ -348,8 +346,6 @@ void update_objects(Object *obj_list, Map *map, Object *player_obj, float frame_
 			}
 		}	
 
-		move_object(temp, obj_list, map, frame_time);	
-
-		if(temp->light != FULL_BRIGHT)	temp->light = map->get_light((int)temp->x >> TILE_SHIFT, (int)temp->y >> TILE_SHIFT, L_FLOOR);
+		move_object(temp, obj_list, map, frame_time);			
 	}
 }

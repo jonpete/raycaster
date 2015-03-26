@@ -7,7 +7,6 @@
 
 void Viewport:: draw_object(BITMAP *frame, Object *obj)		// Returns how much of the object it drew
 {	
-	const int light = (obj->light == FULL_BRIGHT ? 31 : obj->light);	// 31 is max light level
 	BITMAP *sprite = sprites[obj->sprite];
 			
 	int distance = obj->distance;
@@ -111,18 +110,7 @@ void Viewport::	draw_objects(BITMAP *frame, Object *obj_list)
 		if(obj->angle_to_view < -1.f || obj->angle_to_view > 1.f) continue;
 
 		obj->distance = sqrt((obj->x - x) * (obj->x - x) + (obj->y - y) * (obj->y - y));
-		if(obj->distance < 24 || (obj->type == PLAYER && obj->distance < 64)) continue;
-		
-
-		if(obj->light != FULL_BRIGHT)	
-		{
-			if(obj->type == ENEMY && obj->anim == A_ATTACK)
-			{
-				if(obj->light < 8) obj->light = 8;
-				obj->light *= 2;
-			}
-			obj->light = 100;
-		}	
+		if(obj->distance < 24 || (obj->type == PLAYER && obj->distance < 64)) continue;	
 		
 		objs_to_draw[num_obj] = obj;
 		num_obj++;
@@ -141,7 +129,7 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 	int distance;
 	int bottom, top, upper_bottom, upper_top;				
 	int screen_y, upper_screen_y;
-	int light, tex, floor_height;
+	int tex, floor_height;
 	const Tile *tile, *last_tile;
 		
 	clear_floors(floors, screen_h);
@@ -169,31 +157,29 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 				
 			if(last_tile->height != OUT_OF_BOUNDS)		// Get floor data
 			{
-				light = last_tile->get_light(L_FLOOR);
+				
 				tex = last_tile->get_tex(T_FLOOR);
 				floor_height = height - last_tile->height;
 
 				if(bottom < upper_screen_y) bottom = upper_screen_y;
 				while(screen_y > bottom)
 				{
-					add_to_floors(floors, screen_x, screen_y, floor_height, tex, light);
+					add_to_floors(floors, screen_x, screen_y, floor_height, tex);
 					screen_y--;		
 				}
 
-				light = last_tile->get_light(L_CEILING);
+				
 				tex = last_tile->get_tex(T_CEILING);
 				floor_height = height - last_tile->ceiling_height;
 
 				if(upper_top > screen_y) upper_top = screen_y;
 				while(upper_screen_y <= upper_top)
 				{						
-					add_to_floors(floors, screen_x, upper_screen_y, floor_height, tex, light);
+					add_to_floors(floors, screen_x, upper_screen_y, floor_height, tex);
 					upper_screen_y ++;
 				}
 			}
-
-			light =100;
-				
+							
 			if(tile->height > last_tile->height && tile->height != OUT_OF_BOUNDS)
 			{
 				// The scaled height arg here is weird, but makes the textures smoother. Fix someday!

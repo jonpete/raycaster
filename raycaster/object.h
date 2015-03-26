@@ -19,7 +19,6 @@ class Object
 {
 	public:
 	int sprite, w, h, distance;	
-	int light;
 	float x, y, height;
 	float angle_to_view, angle;	
 	float velocity, velocity_angle, vertical_velocity;
