@@ -1,4 +1,4 @@
-#include "mathfunk.h"
+#include "mathfunc.h"
 
 
 float get_dist(float x, float y , float a, float x2, float y2)

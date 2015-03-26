@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 #include "globals.h"
-#include "mathfunk.h"
+#include "mathfunc.h"
 
 class Tile
 {
@@ -68,75 +68,7 @@ class Map
 		int light = light1 + light2;			
 		return light < 32 ? light : 31;
 	}
-
-	// Casts a circle of (max) light out from point
-	// Looks kinda cool but causes too many tile differences and slows everything down. Don't use.
-	void cast_light(float x, float y, int dist)
-	{		
-		float start_x = x;
-		float start_y = y;
-		Tile *tile = get_tile(x, y);		
 		
-		int light_height = tile->height + (tile->ceiling_height - tile->height) / 2;
-
-		for(float angle = 0; angle < TWO_PI; angle += TWO_PI / 720)
-		{
-			x = start_x;
-			y = start_y;
-			
-			for(int i = 1; i < dist; i ++)
-			{
-				
-				if(i >= dist) break;
-
-				int north = get_light(x / TILE_SIZE, y / TILE_SIZE, L_NORTH);
-				int south = get_light(x / TILE_SIZE, y / TILE_SIZE, L_SOUTH);
-				int east = get_light(x / TILE_SIZE, y / TILE_SIZE, L_EAST);
-				int west = get_light(x / TILE_SIZE, y / TILE_SIZE, L_WEST);
-				int floor = get_light(x / TILE_SIZE, y / TILE_SIZE, L_FLOOR);
-				int ceiling = get_light(x / TILE_SIZE, y / TILE_SIZE, L_CEILING);
-
-				int amnt = 1;				
-				floor = add_light(amnt, floor);
-				ceiling = add_light(amnt, ceiling);
-				
-				if(cos(angle) > 0)	west = add_light(amnt, west);
-				else if(cos(angle) < 0)		east = add_light(amnt, east);
-				
-				if(sin(angle) > 0)	north = add_light(amnt, north);
-				else if(sin(angle) < 0)	south = add_light(amnt, south);
-
-				tiles[(int)y / TILE_SIZE * w + (int)x / TILE_SIZE].start_light = 
-				tiles[(int)y / TILE_SIZE * w + (int)x / TILE_SIZE].light =
-					(north << L_NORTH) | (south << L_SOUTH) | (east << L_EAST) | (west << L_WEST) |
-					(floor << L_FLOOR) | (ceiling << L_CEILING);
-
-				float new_x = x;
-				float new_y = y;
-
-				while((int)x / TILE_SIZE == (int)new_x / TILE_SIZE && (int)y / TILE_SIZE == (int)new_y / TILE_SIZE && i < dist)
-				{
-					if((int)x < 0 || (int)y < 0 || (int)x >= w * TILE_SIZE || (int)y >= h * TILE_SIZE)
-					{
-						i = dist;
-						break;
-					}
-					
-					tile = get_tile(x, y);
-					if(tile->height > light_height || tile->ceiling_height < light_height)
-					{
-						i = dist;
-						break;
-					}
-					x += cos(angle) * 2;
-					y += sin(angle) * 2;
-					i ++;
-
-				}
-			}
-		}
-	}
-	
 
 	void load(std::string filename)
 	{				
@@ -210,17 +142,7 @@ class Map
 				p_start_angle = std::stof(buffer);
 				p_start_x = p_start_x * TILE_SIZE + TILE_SIZE/2;
 				p_start_y = p_start_y * TILE_SIZE + TILE_SIZE/2;
-			}
-			else if(buffer == "circle_light")	// Buggy as poop?
-			{
-				getline(l_file, buffer, ',');
-				float x = std::stof(buffer);
-				getline(l_file, buffer, ',');
-				float y = std::stof(buffer);
-				getline(l_file, buffer, '\n');
-				int dist = std::stoi(buffer);
-				cast_light(x * TILE_SIZE, y * TILE_SIZE, dist);
-			}
+			}			
 			else if(buffer == "set_light")
 			{
 				getline(l_file, buffer, ',');

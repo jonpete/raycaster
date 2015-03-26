@@ -1,19 +1,8 @@
 #include "draw.h"
 #include "globals.h"
 
-inline int shade_pixel(int pixel, int light)	//16 bit 565 RGB only
-{
-	int r = (pixel & 0xf800) >> 11;	
-	int g = (pixel & 0x7e0) >> 5;
-	int b = (pixel & 0x1f);	
-	r = (r * light) >> 5;	
-	g = (g * light) >> 5;
-	b = (b * light) >> 5;	
-	return (r << 11) | (g << 5) | b;	
-}
 
-
-void draw_wall_column(BITMAP* frame, BITMAP* tex, int x, int y, int wall_height, int scaled_height, int tex_offset, int light, int upper_clip, int lower_clip)
+void draw_wall_column(BITMAP* frame, BITMAP* tex, int x, int y, int wall_height, int scaled_height, int tex_offset, int upper_clip, int lower_clip)
 {	
 	if(scaled_height <= 0) return;
 	// Increase fixed point shifts to 20 for more accuracy
@@ -37,7 +26,7 @@ void draw_wall_column(BITMAP* frame, BITMAP* tex, int x, int y, int wall_height,
 	int height = bottom - y;
 	do
 	{
-		*dest = shade_pixel(column[(source_y & tex_h) >> 16], light);
+		*dest = column[(source_y & tex_h) >> 16];
 
 		source_y += delta_y;
 		dest += screen_w;
@@ -45,7 +34,7 @@ void draw_wall_column(BITMAP* frame, BITMAP* tex, int x, int y, int wall_height,
 }
 
 
-void draw_floor_line_fixed(BITMAP* frame, BITMAP* texture, int x1, int y1, int x2, int y2, int screen_x, int screen_y, int w, int light)
+void draw_floor_line_fixed(BITMAP* frame, BITMAP* texture, int x1, int y1, int x2, int y2, int screen_x, int screen_y, int w)
 {
 	short* dest = (short*)frame->line[screen_y] + screen_x;
 	
@@ -56,7 +45,7 @@ void draw_floor_line_fixed(BITMAP* frame, BITMAP* texture, int x1, int y1, int x
 	
 	while(w--)
 	{
-		*dest = shade_pixel(((short*)texture->line[(y1 >> 16) & tex_h])[(x1 >> 16) & tex_w],light);		
+		*dest = ((short*)texture->line[(y1 >> 16) & tex_h])[(x1 >> 16) & tex_w];		
 		dest++;
 
 		x1 += delta_x;
@@ -65,28 +54,4 @@ void draw_floor_line_fixed(BITMAP* frame, BITMAP* texture, int x1, int y1, int x
 }
 
 
-int calc_light(int light, int dist, int amnt)
-{
-	/* LIGHT DOESN'T WORK VERY WELL */
 
-	/*if(light >= FULL_BRIGHT || light > 31) return 31;
-	if(amnt == 0) return light;
-	
-	dist += 256;
-	int dist_light = amnt / (dist > 0 ? dist : 1);
-	dist_light = light + dist_light;
-		
-	if(dist_light > 31) dist_light = 31;
-*/	
-
-	
-	//float dist_light = (10000 * ((float)light /24.f)) / (float)dist;
-
-	/* Just distance fade out for now */
-
-	float dist_light = 10000/dist;
-	if(dist_light < 0) dist_light = 0;
-	if(dist_light >31) dist_light = 31;
-
-	return (int)dist_light;	
-}

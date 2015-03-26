@@ -2,7 +2,7 @@
 
 #include "viewport.h"
 #include "draw.h"
-#include "mathfunk.h"
+#include "mathfunc.h"
 #include "globals.h"
 
 void Viewport:: draw_object(BITMAP *frame, Object *obj)		// Returns how much of the object it drew
@@ -81,7 +81,7 @@ void Viewport:: draw_object(BITMAP *frame, Object *obj)		// Returns how much of 
 		while(dest_y < dest_h)
 		{
 			source_pixel = ((short*)sprite->line[source_y >> 16])[source_x >> 16];
-			if(source_pixel != MASK_COLOR_16)	((short*)frame->line[dest_y])[dest_x] = shade_pixel(source_pixel, light);
+			if(source_pixel != MASK_COLOR_16)	((short*)frame->line[dest_y])[dest_x] = source_pixel;
 			dest_y++;
 			source_y += delta_y;
 		}		
@@ -121,7 +121,7 @@ void Viewport::	draw_objects(BITMAP *frame, Object *obj_list)
 				if(obj->light < 8) obj->light = 8;
 				obj->light *= 2;
 			}
-			obj->light = calc_light(obj->light, obj->distance, light_mod);
+			obj->light = 100;
 		}	
 		
 		objs_to_draw[num_obj] = obj;
@@ -192,14 +192,14 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 				}
 			}
 
-			light = calc_light(tile->get_light(rays[screen_x].side), distance, light_mod);
+			light =100;
 				
 			if(tile->height > last_tile->height && tile->height != OUT_OF_BOUNDS)
 			{
 				// The scaled height arg here is weird, but makes the textures smoother. Fix someday!
 				draw_wall_column(frame, textures[tile->get_tex(T_LOWER)], screen_x, top, 
 								tile->height, bottom + ((last_tile->height * projection) / distance) - top,
-								rays[screen_x].tex_offset, light, upper_screen_y, screen_y);							
+								rays[screen_x].tex_offset,upper_screen_y, screen_y);							
 			}		
 				
 			if(top < upper_screen_y) top = upper_screen_y;
@@ -214,7 +214,7 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 			{
 				draw_wall_column(frame, textures[tile->get_tex(T_UPPER)], screen_x, upper_top, 
 								last_tile->ceiling_height - tile->ceiling_height, upper_bottom - upper_top,
-								rays[screen_x].tex_offset, light, upper_screen_y,  screen_y);
+								rays[screen_x].tex_offset, upper_screen_y,  screen_y);
 			}	
 
 			if(upper_bottom > screen_y) upper_bottom = screen_y;
@@ -270,7 +270,7 @@ void Viewport::	draw_floors(BITMAP* frame)
 				source_y2 = source_y + (fl->w * delta_y);
 				
 				draw_floor_line_fixed(frame, textures[fl->texture], source_x, source_y, source_x2, source_y2, 
-									fx, fy, fl->w, calc_light(fl->light, temp_distance >> 16, light_mod)); 					
+									fx, fy, fl->w); 					
 			}
 
 			temp_distance = (temp_distance >> 16) * cos(FOV * 0.5f);

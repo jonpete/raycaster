@@ -4,7 +4,7 @@
 
 #include "globals.h"
 #include "floors.h"
-#include "mathfunk.h"
+#include "mathfunc.h"
 #include "map.h"
 #include "ray.h"
 #include "object.h"
@@ -22,10 +22,9 @@ int main()
 	allegro_init();
 	install_keyboard();
 	set_color_depth(16);
-	set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1024,768,0,0);
-	BITMAP* frame = create_bitmap(SCREEN_W, SCREEN_H);
-	BITMAP* sky = load_bitmap("sky.bmp", NULL);
-	
+	set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280, 960,0,0);
+	BITMAP* frame = create_bitmap(400, 300);
+		
 	textures[0] = create_bitmap(TILE_SIZE, TILE_SIZE);
 	clear(textures[0]);
 	textures[1] = load_bitmap("grass.bmp", NULL);
@@ -34,13 +33,10 @@ int main()
 	textures[4] = load_bitmap("kanzi64.bmp", NULL);
 	sprites[0] = load_bitmap("doomguy.bmp", NULL);	
 	sprites[1] = load_bitmap("laser.bmp", NULL);
-	sprites[2] = load_bitmap("table.bmp", NULL);
-	sprites[3] = load_bitmap("pistol.bmp", NULL);
+	sprites[2] = load_bitmap("table.bmp", NULL);	
 
 	init_guns();
-
-	int sky_offset = 0;
-
+	
 	Map map;
 	map.load("testmap.txt");
 			
@@ -68,7 +64,7 @@ int main()
 
 	int player_fire_delay = 0;
 	int player_gun = G_LASER;
-	bool vsyncon = false;
+
 	while(!key[KEY_ESC])
 	{	
 		old_time = now_time;
@@ -153,33 +149,23 @@ int main()
 			view.height = test_enemy->height + 64;
 			view.angle = test_enemy->angle;
 		}
-		
-		if(key[KEY_F1]) vsyncon = true;
-		if(key[KEY_F2]) vsyncon = false;
+				
 
 		if(view.light_mod > view.default_light) view.light_mod -= 500.f * frame_time;
 		if(view.light_mod < view.default_light) view.light_mod = view.default_light;
 		if(key[KEY_F]) view.light_mod = 10000;
-
- 		// Just a test, make this nicer!
-		sky_offset = -view.angle * (SCREEN_W / FOV) ;
-		while(sky_offset < 0) sky_offset += SCREEN_W;
-		while(sky_offset >= SCREEN_W) sky_offset -= SCREEN_W;				
-		blit(sky, frame, 0, 0, sky_offset, 0, sky->w, sky->h);
-		blit(sky, frame, 0, 0, sky_offset - (sky->w - 1), 0, sky->w, sky->h);	
+		 			
 		
 		update_objects(obj_list, &map, player, frame_time);
+
+		clear(frame);
 		view.draw_walls(frame, &map);
 		view.draw_floors(frame);		
 		view.draw_objects(frame, obj_list);
 		
-		// Just a test - this is crap!
-		// Gun graphic
-		masked_blit(sprites[3], frame, 0, 0, frame->w/2 - sprites[3]->w/3, frame->h - sprites[3]->h, sprites[3]->w, sprites[3]->h);
-
 		textprintf_ex(frame, font, 0, 0, 65535, 0, "FPS: %i  A: %f  ENEMY: %i  FIRE: %i  OBJNUM: %i", display_fps, view.angle, obj_list->next->state, player_fire_delay, Object::total_num_objs);
-		if(vsyncon) vsync();
-		blit(frame,screen,0,0,0 ,0,SCREEN_W,SCREEN_H);		
+		
+		stretch_blit(frame,screen,0,0,frame->w, frame->h,0, 0, SCREEN_W, SCREEN_H);		
 	}
 
 	while(obj_list)

@@ -21,9 +21,6 @@
     <ClCompile Include="floors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mathfunk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,12 +39,12 @@
     <ClCompile Include="guns.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mathfunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="floors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mathfunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="object.h">
@@ -72,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="guns.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mathfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #include "globals.h"
 #include "object.h"
 #include "enemy.h"
-#include "mathfunk.h"
+#include "mathfunc.h"
 #include "guns.h"
 
 

@@ -1,5 +1,5 @@
-#ifndef MATHFUNK_H
-#define MATHFUNK_H
+#ifndef MATHFUNC_H
+#define MATHFUNC_H
 
 #include <cmath>
 
