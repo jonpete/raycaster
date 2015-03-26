@@ -1,0 +1,122 @@
+100 100
+
+set_light
+15, 15, 15
+
+texture
+2, 2, 3, 0
+
+height
+0, 320
+
+rect
+0, 0, 99, 99
+
+height
+128, 320
+
+rect
+0, 0, 99, 0
+
+rect
+0, 0, 0, 99
+
+rect
+99, 0, 99, 99
+
+rect
+0, 99, 99, 99 
+
+texture
+3, 3, 4, 0
+
+height
+0, 320
+
+rect
+4, 4, 5, 5
+
+// Center building
+set_light
+30, 30, 30
+
+texture
+2, 2, 3, 3
+
+height
+10, 256
+
+rect
+10, 10, 20, 20
+
+height
+256, 256
+
+rect
+10, 10, 10, 10
+
+rect
+10, 20, 10, 20
+
+rect
+20, 10, 20, 10
+
+rect
+20, 20, 20, 20
+
+// Other building
+set_light
+15, 15, 15
+
+height
+256, 256
+
+rect
+30, 3, 60, 33
+
+// Stairs hallway
+height
+0, 256
+
+rect
+30, 5, 50, 10
+
+height
+16, 256
+
+rect
+31, 5, 50, 10
+
+height
+32, 256
+
+rect
+32, 5, 50, 10
+
+height
+48, 256
+
+rect
+33, 5, 50, 10
+
+height
+64, 256
+
+rect
+34, 5, 50, 10
+
+// Other hallway
+rect
+46, 5, 50, 33
+
+height
+128, 256
+
+rect
+30, 29, 45, 31
+
+player_tile
+2, 2, 0.8
+
+
+end
