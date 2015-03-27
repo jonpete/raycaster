@@ -300,10 +300,10 @@ int move_object(Object *obj, Object *obj_list, Map *map, float frame_time)
 }
 	
 
-Object* fire_projectile(Object *shooter, Object *obj_list, Gun gun)	// Change to support other projectiles
+Object* fire_projectile(Object *shooter, Object *obj_list, int speed, int damage)	// Change to support other projectiles
 {
 	Object *proj = append_obj(create_object(shooter->x, shooter->y, shooter->height + shooter->h / 2, 
-											gun.sprite, gun.bullet_sprite_w, gun.bullet_sprite_h, 
+											1, 32, 32, 
 											shooter->angle, true, true, PROJECTILE), 
 								obj_list);
 	
@@ -314,8 +314,8 @@ Object* fire_projectile(Object *shooter, Object *obj_list, Gun gun)	// Change to
 		proj->y += sin(proj->velocity_angle) * (3 + abs(shooter->velocity));		
 	}while	(obj_collide(shooter, proj));		
 	
-	proj->attrib[P_DAMAGE] = gun.damage;
-	proj->velocity = gun.speed;	
+	proj->attrib[P_DAMAGE] = damage;
+	proj->velocity = speed;	
 	
 	return proj;
 }

@@ -2,7 +2,6 @@
 
 #include "viewport.h"
 #include "draw.h"
-#include "mathfunc.h"
 #include "globals.h"
 
 void Viewport:: draw_object(BITMAP *frame, Object *obj)		// Returns how much of the object it drew
@@ -13,8 +12,10 @@ void Viewport:: draw_object(BITMAP *frame, Object *obj)		// Returns how much of 
 		
 	int dest_x = get_screen_x(obj->angle_to_view, frame->w);	
 	int dest_w = (obj->w * projection) / distance;
+	
+	// correct for fishbowl due to pythag distance?
+	distance *= cos((dest_x - (screen_w >> 1)) * (FOV / screen_w));
 
-	distance *= get_view_correction(dest_x, screen_w);
 	int dest_y = get_screen_y(height, obj->height, distance, projection, screen_h);			
 	int dest_h = (obj->h * projection) / distance;
 		
@@ -126,7 +127,7 @@ void Viewport::	draw_objects(BITMAP *frame, Object *obj_list)
 
 void Viewport::	draw_walls(BITMAP *frame, Map *map)	
 {
-	int distance;
+	float distance;
 	int bottom, top, upper_bottom, upper_top;				
 	int screen_y, upper_screen_y;
 	int tex, floor_height;
@@ -139,48 +140,48 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 		screen_y = screen_h - 1;
 		upper_screen_y = 0;	
 			
-		rays[screen_x].init(x, y, angle + atan2((screen_x - (screen_w >> 1)), projection));
+		rays[screen_x].init(x, y, angle);
 		tile = map->get_tile(x, y);			
 			
-		while(tile->height != OUT_OF_BOUNDS && screen_y > upper_screen_y)
+		while(screen_y > upper_screen_y)
 		{
 			last_tile = tile;
 			tile = rays[screen_x].cast(map);
-				
-			distance = ROUND(get_dist(x, y, angle, rays[screen_x].x, rays[screen_x].y));
-			if(distance == 0) continue;
+			if (tile == last_tile) continue;
+
+			distance = get_dist(x, y, angle, rays[screen_x].x, rays[screen_x].y);
+			if(distance <= 0) continue;
 			
 			top = get_screen_y(height, tile->height, distance, projection, screen_h);
 			bottom = get_screen_y(height, last_tile->height, distance, projection, screen_h);
 			upper_bottom = get_screen_y(height, tile->ceiling_height, distance, projection, screen_h);
 			upper_top = get_screen_y(height, last_tile->ceiling_height, distance, projection, screen_h);
 				
-			if(last_tile->height != OUT_OF_BOUNDS)		// Get floor data
+			
+			// Get floor/ceiling data				
+			tex = last_tile->get_tex(T_FLOOR);
+			floor_height = height - last_tile->height;
+
+			if(bottom < upper_screen_y) bottom = upper_screen_y;
+			while(screen_y > bottom)
 			{
-				
-				tex = last_tile->get_tex(T_FLOOR);
-				floor_height = height - last_tile->height;
-
-				if(bottom < upper_screen_y) bottom = upper_screen_y;
-				while(screen_y > bottom)
-				{
-					add_to_floors(floors, screen_x, screen_y, floor_height, tex);
-					screen_y--;		
-				}
-
-				
-				tex = last_tile->get_tex(T_CEILING);
-				floor_height = height - last_tile->ceiling_height;
-
-				if(upper_top > screen_y) upper_top = screen_y;
-				while(upper_screen_y <= upper_top)
-				{						
-					add_to_floors(floors, screen_x, upper_screen_y, floor_height, tex);
-					upper_screen_y ++;
-				}
+				add_to_floors(floors, screen_x, screen_y, floor_height, tex);
+				screen_y--;		
 			}
-							
-			if(tile->height > last_tile->height && tile->height != OUT_OF_BOUNDS)
+			
+			tex = last_tile->get_tex(T_CEILING);
+			floor_height = height - last_tile->ceiling_height;
+
+			if(upper_top > screen_y) upper_top = screen_y;
+			while(upper_screen_y <= upper_top)
+			{						
+				add_to_floors(floors, screen_x, upper_screen_y, floor_height, tex);
+				upper_screen_y ++;
+			}
+			
+			
+			// Draw lower part of tile
+			if(tile->height > last_tile->height)
 			{
 				// The scaled height arg here is weird, but makes the textures smoother. Fix someday!
 				draw_wall_column(frame, textures[tile->get_tex(T_LOWER)], screen_x, top, 
@@ -191,12 +192,13 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 			if(top < upper_screen_y) top = upper_screen_y;
 			while(screen_y > top)
 			{
-				depthmap[screen_y * screen_w + screen_x] = distance;	
+				depthmap[screen_y * screen_w + screen_x] = (int)distance;	
 				screen_y--;
 			}			
 
+			// Draw upper part of tile
 			if(tile->get_tex(T_UPPER) != SKY_TEX && tile->ceiling_height < last_tile->ceiling_height 
-					&& upper_screen_y <= screen_y && tile->height != OUT_OF_BOUNDS)
+					&& upper_screen_y <= screen_y)
 			{
 				draw_wall_column(frame, textures[tile->get_tex(T_UPPER)], screen_x, upper_top, 
 								last_tile->ceiling_height - tile->ceiling_height, upper_bottom - upper_top,
@@ -206,7 +208,7 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 			if(upper_bottom > screen_y) upper_bottom = screen_y;
 			while(upper_screen_y <= upper_bottom)
 			{						
-				depthmap[upper_screen_y * screen_w + screen_x] = distance;	
+				depthmap[upper_screen_y * screen_w + screen_x] = (int)distance;	
 				upper_screen_y++;
 			}
 		}
@@ -222,9 +224,10 @@ void Viewport::	draw_floors(BITMAP* frame)
 				
 	const int fixed_x = x * 65536.f;
 	const int fixed_y = y * 65536.f;
-	const int fixed_left_cos = cos(angle - FOV * 0.5f) * 65536.f;
-	const int fixed_left_sin = sin(angle - FOV * 0.5f) * 65536.f;
-	const int corrected_proj = projection * int(65536.f / cos(FOV * 0.5f));
+	const int fixed_left_cos = cos(angle - HALF_FOV) * 65536.f;
+	const int fixed_left_sin = sin(angle - HALF_FOV) * 65536.f;
+	const int view_correction = cos(HALF_FOV) * 65536.f;
+	const int corrected_proj = projection * view_correction * 2;
 
 	int *depthmap_line = depthmap;
 	Floorline *fl;
@@ -259,7 +262,7 @@ void Viewport::	draw_floors(BITMAP* frame)
 									fx, fy, fl->w); 					
 			}
 
-			temp_distance = (temp_distance >> 16) * cos(FOV * 0.5f);
+			temp_distance = (temp_distance * view_correction) >> 32;
 			for(int end = fx + fl->w; fx < end; fx++)	depthmap_line[fx] = temp_distance;
 			fl++;
 		}

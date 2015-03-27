@@ -1,4 +1,4 @@
-#include "mathfunc.h"
+#include "globals.h"
 
 
 float get_dist(float x, float y , float a, float x2, float y2)
@@ -6,12 +6,6 @@ float get_dist(float x, float y , float a, float x2, float y2)
 	x = (x2 - x) * cos(a);
 	y = -(y2 - y) * sin(a);
 	return ((x > y) ? x - y : y - x);
-}
-
-
-float get_view_correction(int screen_x, int screen_w)		// Use with pythag distances
-{
-	return cos((screen_x - (screen_w >> 1)) * (FOV / screen_w));
 }
 
 
@@ -30,7 +24,7 @@ int get_screen_x(float angle_between, int screen_w)
 }
 
 
-int get_screen_y(int view_height, int obj_height, int distance, int projection, int screen_h)
+int get_screen_y(int view_height, int obj_height, float distance, int projection, int screen_h)
 {
-	return (screen_h >> 1) + (projection * (view_height - obj_height)) / (distance != 0 ? distance : 1);
+	return (int)((screen_h >> 1) + (projection * (view_height - obj_height)) / (distance != 0.f ? distance : 1.f));
 }

@@ -96,9 +96,8 @@
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="floors.cpp" />
-    <ClCompile Include="guns.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mathfunc.cpp" />
+    <ClCompile Include="globals.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="ray.cpp" />
     <ClCompile Include="viewport.cpp" />
@@ -108,9 +107,7 @@
     <ClInclude Include="draw.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="floors.h" />
-    <ClInclude Include="guns.h" />
     <ClInclude Include="map.h" />
-    <ClInclude Include="mathfunc.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="viewport.h" />

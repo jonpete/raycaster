@@ -36,10 +36,7 @@
     <ClCompile Include="viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="guns.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mathfunc.cpp">
+    <ClCompile Include="globals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,12 +63,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="viewport.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="guns.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mathfunc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

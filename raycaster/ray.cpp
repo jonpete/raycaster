@@ -42,27 +42,23 @@ Tile* Ray::cast(Map* map)
 	
 	if(delta1 <= delta2) 
 	{
-		if(cosine_angle > 0.f) 	
+		if(cosine_angle > 0.f) 	// west side
 		{				
-			side = L_WEST;
 			tex_offset = (int)y & (TILE_SIZE - 1);
 		}
-		else 
-		{
-			side = L_EAST;
+		else	// east side
+		{			
 			tex_offset = TILE_SIZE - (int)y & (TILE_SIZE - 1);				
 		}
 	}
 	else
 	{
-		if(sine_angle < 0.f) 
-		{
-			side = L_SOUTH;
+		if(sine_angle < 0.f)	// south side
+		{			
 			tex_offset = (int)x & (TILE_SIZE - 1);
 		}
-		else 	
+		else 		// north side
 		{
-			side = L_NORTH;
 			tex_offset = TILE_SIZE - (int)x & (TILE_SIZE - 1);								
 		}
 	}
@@ -75,7 +71,7 @@ void Ray::init(float start_x,float start_y,float angle)
 {
 	x = start_x;
 	y = start_y;
-	sine_angle = sin(angle);
-	cosine_angle = cos(angle);
+	sine_angle = sin(angle + angle_offset);
+	cosine_angle = cos(angle + angle_offset);
 	tex_offset = 0;
 }

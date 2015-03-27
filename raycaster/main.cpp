@@ -1,17 +1,14 @@
-#include <cmath>
 #include <allegro.h>
 #include <winalleg.h>	// For GetTickCount(). Windows.h won't work with allegro
 
 #include "globals.h"
 #include "floors.h"
-#include "mathfunc.h"
 #include "map.h"
 #include "ray.h"
 #include "object.h"
 #include "enemy.h"
 #include "draw.h"
 #include "viewport.h"
-#include "guns.h"
 
 BITMAP *textures[32];
 BITMAP *sprites[32];
@@ -34,8 +31,6 @@ int main()
 	sprites[0] = load_bitmap("doomguy.bmp", NULL);	
 	sprites[1] = load_bitmap("laser.bmp", NULL);
 	sprites[2] = load_bitmap("table.bmp", NULL);	
-
-	init_guns();
 	
 	Map map;
 	map.load("testmap.txt");
@@ -45,7 +40,7 @@ int main()
 	Object::total_num_objs ++;		// create_object() doesn't increase this, but it probably should (append() does that now)
 	Object *player = obj_list;
 
-	int stats[] = {200, G_LASER, 0, 0};
+	int stats[] = {200, 0, 0, 0};
 	Object *test_enemy = append_obj(create_object(400, 400, 0, 0, 64, 64, 0.8, true, true, ENEMY, stats), obj_list);
 	
 	append_obj(create_object(700, 300, 0, 2, sprites[2]->w, sprites[2]->h, 0, false, false, BLOCK), obj_list);
@@ -63,7 +58,6 @@ int main()
 	int display_fps = 0;
 
 	int player_fire_delay = 0;
-	int player_gun = G_LASER;
 
 	while(!key[KEY_ESC])
 	{	
@@ -118,20 +112,13 @@ int main()
 		{
 			if(player_fire_delay <= 0) 
 			{
-				Object*proj;
-				switch(player_gun)
-				{
-					case G_LASER:					
-						proj = fire_projectile(player, obj_list, guns[player_gun]);
+				fire_projectile(player, obj_list, 50, 10);
 
-						// This cheats it over to the right a bit to line up with the gun graphic:
-						proj->y += cos(player->angle) * 8;
-						proj->x -= sin(player->angle) * 8;
+				// This cheats it over to the right a bit to line up with the gun graphic:
+				//proj->y += cos(player->angle) * 8;
+				//proj->x -= sin(player->angle) * 8;
 
-						player_fire_delay = guns[player_gun].recharge;
-						view.light_mod = 10000;
-					break;						
-				}
+				player_fire_delay = 5000;				
 			}
 		}
 
@@ -149,12 +136,6 @@ int main()
 			view.height = test_enemy->height + 64;
 			view.angle = test_enemy->angle;
 		}
-				
-
-		if(view.light_mod > view.default_light) view.light_mod -= 500.f * frame_time;
-		if(view.light_mod < view.default_light) view.light_mod = view.default_light;
-		if(key[KEY_F]) view.light_mod = 10000;
-		 			
 		
 		update_objects(obj_list, &map, player, frame_time);
 

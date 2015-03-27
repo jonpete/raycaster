@@ -4,26 +4,22 @@
 #include <fstream>
 #include <string>
 #include "globals.h"
-#include "mathfunc.h"
 
 class Tile
 {
 	public:
 	int height, ceiling_height;	
-	unsigned start_light, tex, light;
+	unsigned tex;
 
-	inline int get_tex(int side) const	{ return tex >> side & 0xff;	}
-	inline int get_light(int side) const 	{ return light >> side & 0x1f;  }
+	inline int get_tex(int side) const	{ return tex >> side & 0xff;	}	
 	
 	inline bool compare(const Tile* const t) 
 	{ 
-		return (t->height == height && t->ceiling_height == ceiling_height
-				&& t->light == light 
+		return (t->height == height && t->ceiling_height == ceiling_height 
 				&& t->tex == tex); 
 	}
 	
-	Tile() { 		
-		light = start_light = 0;		
+	Tile() { 					
 		tex = 0;
 		height = OUT_OF_BOUNDS; }	
 };
@@ -55,20 +51,7 @@ class Map
 		if (tile_y < 0 || tile_x < 0 || tile_y >= h || tile_x >= w) return OUT_OF_BOUNDS;
 		else return tiles[w * tile_y + tile_x].height;
 	}
-
-	inline int get_light(int tile_x, int tile_y, int side)  {
-		if (tile_y < 0 || tile_x < 0 || tile_y >= h || tile_x >= w) return 0;
-		else return tiles[w * tile_y + tile_x].get_light(side);
-	}
-
-	int add_light(int light1, int light2)
-	{
-		if(light1 < 0) light1 = 0;
-		
-		int light = light1 + light2;			
-		return light < 32 ? light : 31;
-	}
-		
+			
 
 	void load(std::string filename)
 	{				
@@ -76,15 +59,10 @@ class Map
 		std::ifstream l_file(filename);
 		if (!l_file) return;
 		int temp[4] = {0,0,0,0};
-		int tex;
-		int north = 1;
-		int south = 1;
-		int east = 1;
-		int west = 1;
+		int tex;		
 		int floor = 1;
 		int ceiling = 1;
-		int light = (east << L_EAST) | (north << L_NORTH) | (ceiling << L_CEILING) | (west << L_WEST) | (south << L_SOUTH) | (floor << L_FLOOR);
-
+		
 		l_file >> w;
 		l_file >> h;
 		tiles = new Tile [w * h];
@@ -126,8 +104,7 @@ class Map
 					{
 						tiles[j * w + i].height = floor;
 						tiles[j * w + i].ceiling_height = ceiling;
-						tiles[j * w + i].tex = tex;
-						tiles[j * w + i].light = tiles[j * w + i].start_light = light;
+						tiles[j * w + i].tex = tex;						
 					}
 				}
 			}
@@ -146,12 +123,8 @@ class Map
 			else if(buffer == "set_light")
 			{
 				getline(l_file, buffer, ',');
-				north = south = east = west = std::stoi(buffer);
-				getline(l_file, buffer, ',');
-				floor = std::stoi(buffer);
-				getline(l_file, buffer, '\n');
-				ceiling = std::stoi(buffer);
-				light = (east << L_EAST) | (north << L_NORTH) | (ceiling << L_CEILING) | (west << L_WEST) | (south << L_SOUTH) | (floor << L_FLOOR);
+				getline(l_file, buffer, ',');				
+				getline(l_file, buffer, '\n');				
 			}
 		}
 		

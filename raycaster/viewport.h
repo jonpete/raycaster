@@ -41,7 +41,11 @@ class Viewport
 		projection = screen_w / 2;	// Creates 90 degree FOV
 		default_light = 8000;
 		light_mod = 8000;	// Zero is no distance fading
-		rays = new Ray[screen_w];								
+		rays = new Ray[screen_w];	
+		for (int i = 0; i < screen_w; i++)
+		{
+			rays[i].angle_offset = atan2((i - (screen_w >> 1)), projection);
+		}
 		floors = new Floormap[screen_h];		
 		depthmap = new int[screen_w * screen_h];
 		std::fill(depthmap, depthmap + (screen_w * screen_h), OUT_OF_BOUNDS);		

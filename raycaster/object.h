@@ -3,7 +3,6 @@
 
 #include "globals.h"
 #include "map.h"
-#include "guns.h"
 
 #define NUM_ATTRIB 4
 
@@ -59,7 +58,7 @@ int update_animation(Object *obj, float frame_time);
 
 int move_object(Object *obj, Object *obj_list, Map *map, float frame_time);	
 
-Object* fire_projectile(Object *shooter, Object *obj_list, Gun gun);
+Object* fire_projectile(Object *shooter, Object *obj_list, int speed, int damage);
 
 void update_objects(Object *obj_list, Map *map, Object *player_obj, float frame_time);
 

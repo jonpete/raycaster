@@ -1,8 +1,6 @@
 #include "globals.h"
 #include "object.h"
 #include "enemy.h"
-#include "mathfunc.h"
-#include "guns.h"
 
 
 void kill_enemy(Object *enemy)
@@ -96,24 +94,20 @@ void enemy_ai(Object *enemy, Object *target, Object *obj_list, Map *map)
 		case S_ATTACK:
 			if(enemy->attrib[E_FIRE_DELAY] <= 0)
 			{		
-				Object *proj = 0;
-				dist = (int)get_dist(enemy->x, enemy->y, enemy->angle, target->x, target->y);
-
 				start_obj_anim(enemy, A_ATTACK);
-				switch(enemy->attrib[E_WEAPON])
+
+				// Fire a projectile to test
+				dist = (int)get_dist(enemy->x, enemy->y, enemy->angle, target->x, target->y);
+				
+				Object *proj = fire_projectile(enemy, obj_list, 50, 10);
+
+				// Try to angle the shot up/down
+				if(dist != 0 && enemy->height != target->height)	
 				{
-					case G_LASER:
-						proj = fire_projectile(enemy, obj_list, guns[enemy->attrib[E_WEAPON]]);
-
-						// Try to angle the shot up/down
-						if(dist != 0 && enemy->height != target->height)	
-						{
-							proj->vertical_velocity = (target->height - enemy->height) * (proj->velocity / dist);						
-						}
-
-						enemy->attrib[E_FIRE_DELAY] = guns[enemy->attrib[E_WEAPON]].recharge;
-					break;
+					proj->vertical_velocity = (target->height - enemy->height) * (proj->velocity / dist);						
 				}
+
+				enemy->attrib[E_FIRE_DELAY] = 5000;				
 			}
 			enemy->state = S_FOLLOW;
 		break;

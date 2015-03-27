@@ -8,7 +8,8 @@ class Ray
 {
 	public:
 	float x, y, sine_angle, cosine_angle;
-	int tex_offset, side;
+	float angle_offset;
+	int tex_offset;
 
 	Tile* cast(Map* map);
 	
