@@ -119,13 +119,7 @@ class Map
 				p_start_angle = std::stof(buffer);
 				p_start_x = p_start_x * TILE_SIZE + TILE_SIZE/2;
 				p_start_y = p_start_y * TILE_SIZE + TILE_SIZE/2;
-			}			
-			else if(buffer == "set_light")
-			{
-				getline(l_file, buffer, ',');
-				getline(l_file, buffer, ',');				
-				getline(l_file, buffer, '\n');				
-			}
+			}				
 		}
 		
 		l_file.close();		

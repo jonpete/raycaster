@@ -1,10 +1,7 @@
 100 100
 
-set_light
-15, 15, 15
-
 texture
-2, 2, 3, 0
+2, 2, 1, 0
 
 height
 0, 320
@@ -37,11 +34,8 @@ rect
 4, 4, 5, 5
 
 // Center building
-set_light
-30, 30, 30
-
 texture
-2, 2, 3, 3
+2, 2, 3, 5
 
 height
 10, 256
@@ -65,8 +59,8 @@ rect
 20, 20, 20, 20
 
 // Other building
-set_light
-15, 15, 15
+texture
+6, 6, 3, 5
 
 height
 256, 256

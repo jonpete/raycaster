@@ -20,7 +20,7 @@ int main()
 	install_keyboard();
 	set_color_depth(16);
 	set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280, 960,0,0);
-	BITMAP* frame = create_bitmap(640,480);
+	BITMAP* frame = create_bitmap(640, 480);
 		
 	textures[0] = create_bitmap(TILE_SIZE, TILE_SIZE);
 	clear(textures[0]);
@@ -28,6 +28,8 @@ int main()
 	textures[2] = load_bitmap("wall.bmp", NULL);
 	textures[3] = load_bitmap("doom.bmp", NULL);
 	textures[4] = load_bitmap("kanzi64.bmp", NULL);
+	textures[5] = load_bitmap("greytile.bmp", NULL);
+	textures[6] = load_bitmap("doomwall.bmp", NULL);
 	sprites[0] = load_bitmap("doomguy.bmp", NULL);	
 	sprites[1] = load_bitmap("laser.bmp", NULL);
 	sprites[2] = load_bitmap("table.bmp", NULL);	
