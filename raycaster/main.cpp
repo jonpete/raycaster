@@ -32,7 +32,8 @@ int main()
 	textures[6] = load_bitmap("doomwall.bmp", NULL);
 	sprites[0] = load_bitmap("doomguy.bmp", NULL);	
 	sprites[1] = load_bitmap("laser.bmp", NULL);
-	sprites[2] = load_bitmap("table.bmp", NULL);	
+	sprites[2] = load_bitmap("table.bmp", NULL);
+	sprites[3] = load_bitmap("sky.bmp", NULL);
 	
 	Map map;
 	map.load("testmap.txt");
@@ -142,6 +143,16 @@ int main()
 		update_objects(obj_list, &map, player, frame_time);
 
 		clear(frame);
+		/*BITMAP* sky = sprites[3];
+		int w = sky->h;
+		int h = sky->w;		
+		float source_x = frame->w * (player->angle / TWO_PI);
+		for (int i = 0; i < frame->w; i++)
+		{
+			draw_wall_column(frame, sky, i, 0, h, h, (int)source_x % w, 0, h);
+			source_x += 1;
+		}*/
+
 		view.draw_walls(frame, &map);
 		view.draw_floors(frame);		
 		view.draw_objects(frame, obj_list);

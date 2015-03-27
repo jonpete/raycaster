@@ -28,11 +28,12 @@ class Tile
 class Map
 {
 	private:
-	Tile bad_tile;
+	
 	Tile* tiles;	
 	int w, h;
 
 	public:
+	Tile bad_tile;
 	int p_start_x, p_start_y, p_start_h;
 	float p_start_angle;
 		

@@ -147,7 +147,7 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 		{
 			last_tile = tile;
 			tile = rays[screen_x].cast(map);
-			if (tile == last_tile) continue;
+			
 
 			distance = get_dist(x, y, angle, rays[screen_x].x, rays[screen_x].y);
 			if(distance <= 0) continue;
@@ -181,7 +181,7 @@ void Viewport::	draw_walls(BITMAP *frame, Map *map)
 			
 			
 			// Draw lower part of tile
-			if(tile->height > last_tile->height)
+			if(tile->height > last_tile->height && tile->get_tex(T_LOWER) != SKY_TEX)
 			{
 				// The scaled height arg here is weird, but makes the textures smoother. Fix someday!
 				draw_wall_column(frame, textures[tile->get_tex(T_LOWER)], screen_x, top, 
@@ -236,13 +236,17 @@ void Viewport::	draw_floors(BITMAP* frame)
 	{
 		if(fy == screen_h >> 1) continue;
 		distance = corrected_proj / (fy - (screen_h >> 1));
+		
 		fl = floors[fy].floorlines;
 
 		for(int fx, i = 0; i < floors[fy].size; i++)
 		{
 			fx = fl->x;			
 			temp_distance = (distance * fl->height);		
-				
+			int light = (temp_distance >> 16);
+			light = light > 0 ? 10000 / light : 32;
+			if (light > 32) light = 32;
+
 			if(fl->texture != SKY_TEX)
 			{					
 				source_x = fixed_x + ((temp_distance * fixed_left_cos) >> 16);
@@ -259,7 +263,7 @@ void Viewport::	draw_floors(BITMAP* frame)
 				source_y2 = source_y + (fl->w * delta_y);
 				
 				draw_floor_line_fixed(frame, textures[fl->texture], source_x, source_y, source_x2, source_y2, 
-									fx, fy, fl->w); 					
+									fx, fy, fl->w, light); 					
 			}
 
 			temp_distance = (temp_distance * view_correction) >> 32;
