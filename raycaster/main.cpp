@@ -48,7 +48,7 @@ int main()
 	
 	append_obj(create_object(700, 300, 0, 2, sprites[2]->w, sprites[2]->h, 0, false, false, BLOCK), obj_list);
 	append_obj(create_object(764, 300, 0, 2, sprites[2]->w, sprites[2]->h, 0, false, false, BLOCK), obj_list);
-	append_obj(create_object(812, 300, 0, 2, sprites[2]->w, sprites[2]->h, 0, false, false, BLOCK), obj_list);
+	append_obj(create_object(828, 300, 0, 2, sprites[2]->w, sprites[2]->h, 0, false, false, BLOCK), obj_list);
 
 	Viewport view(map.p_start_x, map.p_start_y, frame->w, frame->h, map.p_start_h + 64, map.p_start_angle);
 		
