@@ -20,7 +20,7 @@ int main()
 	install_keyboard();
 	set_color_depth(16);
 	set_gfx_mode(GFX_AUTODETECT_WINDOWED, 1280, 960,0,0);
-	BITMAP* frame = create_bitmap(640, 480);
+	BITMAP* frame = create_bitmap(400,300);
 		
 	textures[0] = create_bitmap(TILE_SIZE, TILE_SIZE);
 	clear(textures[0]);
